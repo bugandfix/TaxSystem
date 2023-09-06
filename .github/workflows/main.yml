@@ -1,0 +1,37 @@
+
+
+name: Test And Publish
+
+on:
+  workflow_dispatch:  
+  push:
+    branches:
+    - master
+    - main
+
+
+
+jobs:
+  publish:
+    name: publish
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '6.0.x'
+          
+      - name: Restore
+        run: dotnet restore ./TaxSystem.sln
+        
+      - name: Build
+        run: dotnet build ./TaxSystem.sln --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test -c Release --no-build
+        
+      - name: Publish
+        run: dotnet publish ./TaxSystem.sln --configuration Release --no-build
